@@ -1,0 +1,285 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model marcas {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  sitio_web   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  parabolas   parabolas[]
+  equipos_modelos equipos_modelos[]
+  casillas    casillas[]
+}
+
+model parabolas {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  marca_id    Int?
+  modelo      String
+  banda       Int?     @default(5)
+  ganancia    Int?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  marca       marcas?   @relation(fields: [marca_id], references: [id])
+  equipos_rf  equipos_rf[]
+}
+
+model equipos_modelos {
+  id              Int      @id @default(autoincrement())
+  modelo          String
+  marca_id        Int?
+  alimentacion    Int
+  consumo_energia Int
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  marca           marcas?   @relation(fields: [marca_id], references: [id])
+  equipos_rf      equipos_rf[]
+}
+
+model casillas {
+  id          Int      @id @default(autoincrement())
+  modelo      String
+  marca_id    Int?
+  dimensiones String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  marca       marcas?   @relation(fields: [marca_id], references: [id])
+  nodos       nodos[]
+}
+
+model zonas_estados {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  zonas       zonas[]
+}
+
+model zonas {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  estado_id   Int?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  estado      zonas_estados? @relation(fields: [estado_id], references: [id])
+  nodos       nodos[]
+}
+
+model nodos {
+  id                Int      @id @default(autoincrement())
+  nombre            String
+  zona_id          Int?
+  casilla_id       Int?
+  fecha_instalacion DateTime?
+  camara            Boolean  @default(false)
+  telefono          String?
+  direccion         String
+  departamento      String
+  localidad         String
+  latitud           String
+  longitud          String
+  descripcion       String?
+  altura            Int
+  propiedad         String?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  zona              zonas?    @relation(fields: [zona_id], references: [id])
+  casilla          casillas?  @relation(fields: [casilla_id], references: [id])
+  torres           torres[]
+  equipos_rf       equipos_rf[]
+  asistencias      asistencias[]
+}
+
+model torres {
+  id                      Int      @id @default(autoincrement())
+  dimension               String
+  medida_cara_interna     Float
+  medida_cara_externa     Float
+  dimension_cano          Float
+  riendas                 Int
+  nodo_id                 Int?
+  created_at              DateTime @default(now())
+  updated_at              DateTime @updatedAt
+
+  nodo                   nodos?    @relation(fields: [nodo_id], references: [id])
+}
+
+model equipos_rf {
+  id                      Int      @id @default(autoincrement())
+  nombre                  String
+  serial                  String
+  modelo_id               Int?
+  parabola_id            Int?
+  modo_equipo             String   @default("No asignado")
+  nodo_id                 Int?
+  estado_no_instalado     String?
+  created_at              DateTime @default(now())
+  updated_at              DateTime @updatedAt
+
+  modelo                  equipos_modelos? @relation(fields: [modelo_id], references: [id])
+  parabola                parabolas?      @relation(fields: [parabola_id], references: [id])
+  nodo                    nodos?          @relation(fields: [nodo_id], references: [id])
+}
+
+model paneles {
+  id          Int      @id @default(autoincrement())
+  modelo      String
+  amperaje    Int
+  voltaje     Int
+  woltaje     Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model inversores {
+  id          Int      @id @default(autoincrement())
+  modelo      String
+  amperaje    Int
+  voltaje     Int
+  woltaje     Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model reguladores {
+  id          Int      @id @default(autoincrement())
+  modelo      String
+  amperaje    Int
+  voltaje     Int
+  woltaje     Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model baterias {
+  id          Int      @id @default(autoincrement())
+  tipo        String
+  amperaje    Int
+  voltaje     Int
+  woltaje     Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model fuentes {
+  id          Int      @id @default(autoincrement())
+  tipo        String
+  voltaje     Int
+  amperaje    Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model obras {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  fecha       DateTime
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  cuadrillas   cuadrillas[]
+}
+
+model encargados {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  puesto      String
+  telefono    String
+  estado      Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  asistencias asistencias[]
+}
+
+model asistencias_trabajos {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  asistencias asistencias[]
+}
+
+model asistencias_causas {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  asistencias asistencias[]
+}
+
+model asistencias_motivos {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  asistencias asistencias[]
+}
+
+model asistencias_tipos {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  asistencias asistencias[]
+}
+
+model asistencias {
+  id                    Int      @id @default(autoincrement())
+  nodo_id               Int?
+  tipo_id               Int?
+  motivo_id             Int?
+  causa_id              Int?
+  trabajo_id            Int?
+  encargado_id          Int?
+  numero_ot             Int?
+  fecha_asistencia      DateTime?
+  hora_salida           DateTime?
+  hora_llegada          DateTime?
+  hora_retiro           DateTime?
+  link_fotos            String?
+  observaciones         String?
+  tarea_realizada       Boolean  @default(false)
+  equipo_desintalado    Boolean  @default(false)
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  nodo                  nodos?          @relation(fields: [nodo_id], references: [id])
+  tipo                  asistencias_tipos? @relation(fields: [tipo_id], references: [id])
+  motivo                asistencias_motivos? @relation(fields: [motivo_id], references: [id])
+  causa                 asistencias_causas? @relation(fields: [causa_id], references: [id])
+  trabajo               asistencias_trabajos? @relation(fields: [trabajo_id], references: [id])
+  encargado             encargados?      @relation(fields: [encargado_id], references: [id])
+  cuadrillas           cuadrillas[]     // Added relation
+}
+
+model cuadrillas {
+  id          Int      @id @default(autoincrement())
+  obra_id     Int?
+  chofer      Boolean  @default(false)
+  asistencia_id Int?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  obra         obras?      @relation(fields: [obra_id], references: [id])
+  asistencia   asistencias? @relation(fields: [asistencia_id], references: [id])
+}
