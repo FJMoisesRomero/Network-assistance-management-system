@@ -5,7 +5,7 @@ This project is a comprehensive solution for network management, designed to opt
 ## Technologies Used 🛠️
 
 - **Frontend:** Next.js, TypeScript, CSS.
-- **Backend:** Prisma as ORM, REST API.
+- **Backend:** Prisma as ORM, REST API. Nextjs Server Actions.
 - **Database:** PostgreSQL.
 
 ## Key Features ⚙️
