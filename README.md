@@ -107,5 +107,9 @@ Below are some images showcasing the interface and key features of the **Network
 ![capture](images/11.png)
 ![capture](images/12.png)
 ![capture](images/13.png)
+![capture](images/01.png)
+![capture](images/02.png)
+![capture](images/03.png)
+![capture](images/04.png)
 
 
